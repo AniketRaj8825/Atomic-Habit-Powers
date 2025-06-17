@@ -1,0 +1,40 @@
+// Enhanced Habit Tracker
+let habits = JSON.parse(localStorage.getItem('habits')) || [];
+
+function addHabit() {
+    const input = document.getElementById('habitInput');
+    const habit = input.value.trim();
+    
+    if (habit) {
+        habits.push({
+            text: habit,
+            date: new Date().toLocaleDateString(),
+            completed: false
+        });
+        
+        localStorage.setItem('habits', JSON.stringify(habits));
+        updateHabitList();
+        input.value = '';
+    }
+}
+
+function toggleHabit(index) {
+    habits[index].completed = !habits[index].completed;
+    localStorage.setItem('habits', JSON.stringify(habits));
+    updateHabitList();
+}
+
+function updateHabitList() {
+    const habitList = document.getElementById('habitList');
+    habitList.innerHTML = habits.map((habit, index) => `
+        <li class="list-group-item d-flex justify-content-between align-items-center ${habit.completed ? 'list-group-item-success' : ''}">
+            <span>${habit.text} <small class="text-muted">(${habit.date})</small></span>
+            <button onclick="toggleHabit(${index})" class="btn btn-sm ${habit.completed ? 'btn-outline-success' : 'btn-outline-secondary'}">
+                ${habit.completed ? '✓ Done' : 'Mark Done'}
+            </button>
+        </li>
+    `).join('');
+}
+
+// Initialize on load
+updateHabitList();
